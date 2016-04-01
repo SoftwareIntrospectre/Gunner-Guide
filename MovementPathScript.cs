@@ -14,8 +14,8 @@ public class MovementPathScript : MonoBehaviour {
 
 	public static Quaternion gunnerRotation;
 
-	/*public string nextLevel;
-	public string restartLevel;*/
+	public string nextLevel;
+	public string restartLevel;
 
 	private Vector3 last_position;
 	private Vector3 current_position; 
@@ -27,15 +27,13 @@ public class MovementPathScript : MonoBehaviour {
 	void Start () {
 		//pathToFollow = GameObject.Find (pathName).GetComponent<GunnerPathScript> ();
 		last_position = transform.position; 
-
-		levelManager = levelManager.LoadScene (); 
 	}
 
 	void Update () {
 		float distance = Vector3.Distance (PathToFollow.path_objs [CurrentWayPointID].position, transform.position);
 		transform.position = Vector3.MoveTowards (transform.position, PathToFollow.path_objs [CurrentWayPointID].position, Time.deltaTime * gunnerSpeed);	
 	
-		PointTowards ();
+		PointTowards (); 
 
 		if (distance <= reachDistance) {
 			CurrentWayPointID++;
@@ -54,15 +52,15 @@ public class MovementPathScript : MonoBehaviour {
 			Destroy (other.gameObject);
 
 		if (other.gameObject.CompareTag ("LaserGate"))
-			 levelManager.restartLevel; 
-			//SceneManager.LoadScene (restartLevel);
+			//levelManager.LoadScene(string name)
+			SceneManager.LoadScene (restartLevel);
 
 		if (other.gameObject.CompareTag ("NextLevel"))
-			levelManager.nextLevel;
-			//SceneManager.LoadScene (nextLevel);
+			//levelManager.nextLevel; 
+			SceneManager.LoadScene (nextLevel);
 	}
 
-	public void PointTowards(){
+	public void PointTowards(){ 
 		var gunnerRotation = Quaternion.LookRotation (PathToFollow.path_objs [CurrentWayPointID].position - transform.position);
 		transform.rotation = Quaternion.Lerp(transform.rotation, gunnerRotation, Time.deltaTime * rotatationSpeed); 
 	}
