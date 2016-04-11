@@ -7,7 +7,9 @@ public class MovementPathScript : MonoBehaviour {
 	public GunnerPathScript PathToFollow; 
 
 	public int CurrentWayPointID = 0;
+	private float speedVariable;
 	public float gunnerSpeed;
+	public float hurrySpeed; 
 	private float reachDistance = 1.0f;
 	public float rotatationSpeed = 5.0f;
 	public string pathName;
@@ -20,19 +22,19 @@ public class MovementPathScript : MonoBehaviour {
 	private Vector3 last_position;
 	private Vector3 current_position; 
 
-	public LevelManager levelManager; 
+	public GameObject progressionObjectParent;
 
 
 
 	void Start () {
-		//pathToFollow = GameObject.Find (pathName).GetComponent<GunnerPathScript> ();
 		last_position = transform.position; 
 	}
 
 	void Update () {
-		float distance = Vector3.Distance (PathToFollow.path_objs [CurrentWayPointID].position, transform.position);
-		transform.position = Vector3.MoveTowards (transform.position, PathToFollow.path_objs [CurrentWayPointID].position, Time.deltaTime * gunnerSpeed);	
-	
+
+		float distance = Vector3.Distance (PathToFollow.path_objs [CurrentWayPointID].position, transform.position); 
+		GunnerMove ();
+
 		PointTowards (); 
 
 		if (distance <= reachDistance) {
@@ -43,21 +45,36 @@ public class MovementPathScript : MonoBehaviour {
 			CurrentWayPointID = 13;
 		}
 	}
+		
+		void GunnerMove(){
+			transform.position = Vector3.MoveTowards (transform.position, PathToFollow.path_objs [CurrentWayPointID].position, Time.deltaTime * speedVariable);	 
+			speedVariable = gunnerSpeed; 
+
+		if (GameObject.FindGameObjectsWithTag ("BulletProgressionObject").Length == 0) {  
+			HurryUp ();
+		}
+	}
+
+	void HurryUp(){
+		speedVariable = hurrySpeed;  
+	}
+		
+
 
 	void OnTriggerEnter(Collider other){
 		if (other.gameObject.CompareTag ("BulletProgressionObject"))
-			Destroy (this.gameObject);
-
-		if (other.gameObject.CompareTag ("GunnerProgressionObject")) 
 			Destroy (other.gameObject);
 
-		if (other.gameObject.CompareTag ("LaserGate"))
-			//levelManager.LoadScene(string name)
+		if (other.gameObject.CompareTag ("LaserGate") || Input.GetKey(KeyCode.Space))
 			SceneManager.LoadScene (restartLevel);
 
 		if (other.gameObject.CompareTag ("NextLevel"))
-			//levelManager.nextLevel; 
 			SceneManager.LoadScene (nextLevel);
+
+		/*if (other.gameObject.CompareTag ("SecretBullseye"))
+			Destroy (other.gameObject);
+			this.progressionObjectParent.SetActive (false);
+			HurryUp ();*/
 	}
 
 	public void PointTowards(){ 
