@@ -31,5 +31,3 @@ public class GunnerPathScript : MonoBehaviour {
 	}
 }
 
-
-//https://www.youtube.com/watch?v=1aBjTa3xQzE 
