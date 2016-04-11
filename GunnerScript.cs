@@ -33,12 +33,5 @@ public class GunnerScript : MonoBehaviour {
 		
 		MagicBulletPosition (); 
 		Instantiate (magicBullet, masterBullet.transform.position, gunnerTransform.rotation * Quaternion.Euler(90,0,90));  
-		           // empty MagicBullet "masterGO", gunnerTransform, gunnerTransform.rotation. Overthinking. :)
-		//this mostly works -----> Instantiate (magicBullet, magicBulletPosition, Quaternion.LookRotation(gunnerTransform.up) * Quaternion.Euler(90,0,90));
-
 	}
-
-	/*public void GunnerHaste(){
-		staticMovementPathScript.
-	}*/
 }
