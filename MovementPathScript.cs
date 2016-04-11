@@ -70,11 +70,6 @@ public class MovementPathScript : MonoBehaviour {
 
 		if (other.gameObject.CompareTag ("NextLevel"))
 			SceneManager.LoadScene (nextLevel);
-
-		/*if (other.gameObject.CompareTag ("SecretBullseye"))
-			Destroy (other.gameObject);
-			this.progressionObjectParent.SetActive (false);
-			HurryUp ();*/
 	}
 
 	public void PointTowards(){ 
