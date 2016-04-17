@@ -10,7 +10,7 @@ public class MovementPathScript : MonoBehaviour {
 	private float speedVariable;
 	public float gunnerSpeed;
 	public float hurrySpeed; 
-	private float reachDistance = 1.0f;
+	private float distanceToDestination = 1.0f;
 	public float rotatationSpeed = 5.0f;
 	public string pathName;
 
@@ -19,35 +19,35 @@ public class MovementPathScript : MonoBehaviour {
 	public string nextLevel;
 	public string restartLevel;
 
-	private Vector3 last_position;
-	private Vector3 current_position; 
+	/*private Vector3 last_position;
+	private Vector3 current_position; */
 
 	public GameObject progressionObjectParent;
 
 
 
-	void Start () {
+/*	void Start () {
 		last_position = transform.position; 
-	}
+	}*/
 
 	void Update () {
 
-		float distance = Vector3.Distance (PathToFollow.path_objs [CurrentWayPointID].position, transform.position); 
+		float gunnerMovementDistance = Vector3.Distance (PathToFollow.wayPoint [CurrentWayPointID].position, transform.position); 
 		GunnerMove ();
 
 		PointTowards (); 
 
-		if (distance <= reachDistance) {
+		if (gunnerMovementDistance <= distanceToDestination) {
 			CurrentWayPointID++;
 		}
 
-		if (CurrentWayPointID >= PathToFollow.path_objs.Count) {
+		if (CurrentWayPointID >= PathToFollow.waypoint.Count) {
 			CurrentWayPointID = 13;
 		}
 	}
 		
 		void GunnerMove(){
-			transform.position = Vector3.MoveTowards (transform.position, PathToFollow.path_objs [CurrentWayPointID].position, Time.deltaTime * speedVariable);	 
+			transform.position = Vector3.MoveTowards (transform.position, PathToFollow.waypoint [CurrentWayPointID].position, Time.deltaTime * speedVariable);	 
 			speedVariable = gunnerSpeed; 
 
 		if (GameObject.FindGameObjectsWithTag ("BulletProgressionObject").Length == 0) {  
