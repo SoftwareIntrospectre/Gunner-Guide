@@ -4,16 +4,16 @@ using UnityEngine.SceneManagement;
 
 public class MagicBulletScript : MonoBehaviour {
 
-	private int yRotation = 90;
+	private int magicBUlletYRotation = 90;
 	public float magicBulletSpeed = 1;
 	public float speedOffset;
 
 	private static MovementPathScript singletonMPS; 
 
-	private Vector3 input; 
+	private Vector3 playerInput; 
 
 	void Start() {
-		input = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));   
+		playerInput = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));   
 		singletonMPS = GetComponent<MovementPathScript> (); 
 	}
 
@@ -67,21 +67,21 @@ public class MagicBulletScript : MonoBehaviour {
 	}
 		
 	void TurnUp(){  
-		Quaternion rotation = Quaternion.Euler (-yRotation, 0, 0);
+		Quaternion rotation = Quaternion.Euler (-magicBulletYRotation, 0, 0);
 		transform.rotation = rotation;
 	}
 
 	void TurnDown(){
-		Quaternion rotation = Quaternion.Euler (yRotation, 0, 0);
+		Quaternion rotation = Quaternion.Euler (magicBulletYRotation, 0, 0);
 		transform.rotation = rotation;
 	}
 
 	void TurnLeft(){
-		transform.eulerAngles = new Vector3 (0, 0, -yRotation);
+		transform.eulerAngles = new Vector3 (0, 0, -magicBulletYRotation);
 	}
 
 	void TurnRight(){
-		transform.eulerAngles = new Vector3 (0, 0, yRotation);
+		transform.eulerAngles = new Vector3 (0, 0, magicBulletYRotation);
 	}
 		
 
