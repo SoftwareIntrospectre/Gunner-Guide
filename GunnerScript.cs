@@ -1,37 +1,64 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using System.Collections;
+
 
 public class GunnerScript : MonoBehaviour {
 
-	private static GunnerScript singleton;
+	//private static GunnerScript singleton;
 
 	public Transform gunnerTransform;
-	public GameObject masterBullet; 
-	public GameObject magicBullet; 
+	public Transform masterBulletTransform;
+	public GameObject magicBulletPrefab; 
 	public Vector3 magicBulletPosition; 
-	bool isFired;
+
+	/*public Text scoreText; 
+	public int score;  */
 
 	void Start () {
-		singleton = this;
-		gunnerTransform = transform;
-		MagicShoot ();  
-
+		//singleton = this;
+		gunnerTransform = transform;  
+		MagicShoot ();    
+		//score = 0;
+		//UpdateScore ();
 	}
+
+	void Update(){
+		if (Input.GetMouseButtonDown(0)) 
+			MagicShoot ();
+	} 
 			
 	public void MagicBulletPosition(){
 		magicBulletPosition = 
-			new Vector3 (gunnerTransform.position.x + 5, gunnerTransform.position.y, gunnerTransform.position.z + 1 * Time.deltaTime); 
+			new Vector3 (masterBulletTransform.position.x +5, masterBulletTransform.position.y, masterBulletTransform.position.z * Time.deltaTime); 
+	}
+
+
+	void OnTriggerEnter(Collider other){ 
+		if (gameObject.CompareTag ("BulletProgressionObject")) {
+			//score = score + 10;
+			//UpdateScore();
+		}
 	}
 		
 
-	public static void StaticShoot() {
+	/*public static void StaticShoot() {
 		singleton.MagicShoot (); 
-	}
+	}*/
 
 	public void MagicShoot(){ 
 		
 		MagicBulletPosition (); 
-		Instantiate (magicBullet, masterBullet.transform.position, gunnerTransform.rotation * Quaternion.Euler(90,0,90));  
+		Instantiate (magicBulletPrefab, masterBulletTransform.position, gunnerTransform.rotation * Quaternion.Euler(0,0,90));  
 	}
+
+	/*public void AddScore(int newScoreValue){
+		score += newScoreValue;
+		UpdateScore ();
+	}
+
+	void UpdateScore(){
+		scoreText.text = "Score: " + score.ToString ();
+	}*/
 }

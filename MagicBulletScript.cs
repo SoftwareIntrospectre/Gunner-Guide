@@ -1,20 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MagicBulletScript : MonoBehaviour {
 
-	private int magicBUlletYRotation = 90;
+	private int yRotation = 90;
 	public float magicBulletSpeed = 1;
 	public float speedOffset;
+	//private static MovementPathScript singletonMPS; 
+	private Vector3 input; 
+	//public MovementPathScript gunnerMovement; 
 
-	private static MovementPathScript singletonMPS; 
+	public Text countText;
+	private int count; 
 
-	private Vector3 playerInput; 
 
 	void Start() {
-		playerInput = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));   
-		singletonMPS = GetComponent<MovementPathScript> (); 
+		//gunnerMovement = GetComponent<MovementPathScript> (); 
+		input = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));  
+		//singletonMPS = GetComponent<MovementPathScript> (); 
+
+	
 	}
 
 	void Update () {
@@ -67,37 +74,36 @@ public class MagicBulletScript : MonoBehaviour {
 	}
 		
 	void TurnUp(){  
-		Quaternion rotation = Quaternion.Euler (-magicBulletYRotation, 0, 0);
+		Quaternion rotation = Quaternion.Euler (-yRotation, 0, 0);
 		transform.rotation = rotation;
 	}
 
 	void TurnDown(){
-		Quaternion rotation = Quaternion.Euler (magicBulletYRotation, 0, 0);
+		Quaternion rotation = Quaternion.Euler (yRotation, 0, 0);
 		transform.rotation = rotation;
 	}
 
 	void TurnLeft(){
-		transform.eulerAngles = new Vector3 (0, 0, -magicBulletYRotation);
+		transform.eulerAngles = new Vector3 (0, 0, -yRotation);
 	}
 
 	void TurnRight(){
-		transform.eulerAngles = new Vector3 (0, 0, magicBulletYRotation);
+		transform.eulerAngles = new Vector3 (0, 0, yRotation);
 	}
 		
 
 	void OnTriggerEnter (Collider other){ 
 		
-		if (other.gameObject.CompareTag ("Obstacle")) {
-			GunnerScript.StaticShoot ();
-			Destroy (gameObject);
-		}
-		 
-		if (other.gameObject.CompareTag ("BulletProgressionObject"))
-			Destroy (other.gameObject);
+		if (other.gameObject.CompareTag ("Obstacle")) 
+			this.gameObject.SetActive (false);
 
-		if (other.gameObject.CompareTag ("SecretBullseye"))
-		Destroy (other.gameObject);
-	
+		if (other.gameObject.CompareTag ("BulletProgressionObject"))
+			other.gameObject.SetActive (false);
 	}
+
+
+
+	//add bowling score logic Function (BOWL)
+		
 }
 
