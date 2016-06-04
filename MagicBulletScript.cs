@@ -7,8 +7,10 @@ public class MagicBulletScript : MonoBehaviour {
 
 	private int yRotation = 90;
 	public float magicBulletSpeed = 1;
-	public float speedOffset;
-	//private static MovementPathScript singletonMPS; 
+	public float fastSpeed;
+	public float slowSpeed;
+	public float normalSpeed; 
+	//private static MovementPathScript singletonMPS;  
 	private Vector3 input; 
 	//public MovementPathScript gunnerMovement; 
 
@@ -17,7 +19,7 @@ public class MagicBulletScript : MonoBehaviour {
 
 
 	void Start() {
-		//gunnerMovement = GetComponent<MovementPathScript> (); 
+
 		input = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));  
 		//singletonMPS = GetComponent<MovementPathScript> (); 
 
@@ -99,6 +101,15 @@ public class MagicBulletScript : MonoBehaviour {
 
 		if (other.gameObject.CompareTag ("BulletProgressionObject"))
 			other.gameObject.SetActive (false);
+
+		if (other.gameObject.CompareTag ("FastGate"))
+			magicBulletSpeed = magicBulletSpeed * fastSpeed;
+
+		if (other.gameObject.CompareTag ("SlowGate")) 
+			magicBulletSpeed = slowSpeed; 
+
+		if (other.gameObject.CompareTag ("NormalSpeedGate"))
+			magicBulletSpeed = normalSpeed;
 	}
 
 
