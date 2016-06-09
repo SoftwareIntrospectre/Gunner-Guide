@@ -6,22 +6,21 @@ using UnityEngine.UI;
 public class MagicBulletScript : MonoBehaviour {
 
 	private int yRotation = 90;
-	public float magicBulletSpeed = 1;
-	public float speedOffset;
-	//private static MovementPathScript singletonMPS; 
-	private Vector3 input; 
-	//public MovementPathScript gunnerMovement; 
+	private Vector3 input;  
+	private ScoreManagerScript scoreManager; 
 
-	public Text countText;
-	private int count; 
+	public float magicBulletSpeed = 1;
+	public float fastSpeed;
+	public float slowSpeed;
+	public float normalSpeed;  
+	public AudioSource targetShot; 
 
 
 	void Start() {
-		//gunnerMovement = GetComponent<MovementPathScript> (); 
-		input = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));  
-		//singletonMPS = GetComponent<MovementPathScript> (); 
 
-	
+		input = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));  
+		scoreManager = GetComponent<ScoreManagerScript> ();
+		targetShot = GetComponent<AudioSource> ();
 	}
 
 	void Update () {
@@ -31,43 +30,15 @@ public class MagicBulletScript : MonoBehaviour {
 		
 
 	void MagicMovement(){
-	/*	int[] array = { TurnRight, TurnLeft, TurnUp, TurnDown }; 
-		switch (array [0]) {
-
-		case TurnRight:
-			input.x > 0;
-			break;
-
-		case TurnLeft:
-			input.x < 0;
-			break;
-
-		case TurnUp:
-			input.z > 0;
-			break;
-
-		case TurnDown:
-			input.z < 0;
-			break;
-
-		default:
-			input = 0;
-			break;
-		}
-	*/
-	
 		if (Input.GetKeyDown ("w")) { 
 			TurnUp ();
 		}
-
 		if (Input.GetKeyDown ("s")) {
 			TurnDown (); 
 		}
-
 		if (Input.GetKeyDown ("a")) {
 			TurnLeft (); 
 		}
-
 		if (Input.GetKeyDown ("d")) {
 			TurnRight ();  
 		}
@@ -93,17 +64,27 @@ public class MagicBulletScript : MonoBehaviour {
 		
 
 	void OnTriggerEnter (Collider other){ 
-		
 		if (other.gameObject.CompareTag ("Obstacle")) 
 			this.gameObject.SetActive (false);
 
 		if (other.gameObject.CompareTag ("BulletProgressionObject"))
-			other.gameObject.SetActive (false);
+			//DestroyTarget ();
+			targetShot.Play ();
+			scoreManager.ScoreUpdate ();
+
+		if (other.gameObject.CompareTag ("FastGate"))
+			magicBulletSpeed = magicBulletSpeed * fastSpeed;
+
+		if (other.gameObject.CompareTag ("SlowGate")) 
+			magicBulletSpeed = slowSpeed; 
+
+		if (other.gameObject.CompareTag ("NormalSpeedGate"))
+			magicBulletSpeed = normalSpeed;
 	}
 
-
-
-	//add bowling score logic Function (BOWL)
-		
+	public void DestroyTarget(int passedValue, GameObject passedObject){
+		passedObject.GetComponent<Renderer> ().enabled = false;
+		Destroy (passedObject, 1.0f);
+	}
 }
 
