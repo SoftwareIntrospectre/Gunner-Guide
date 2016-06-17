@@ -3,25 +3,15 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class ScoreManagerScript : MonoBehaviour {
-
-
-	public Text countText;
-	public int count; 
-
-	// Use this for initialization
-	void Start () {
-		count = 0;
-	}
 	
-	void OnTriggerEnter (Collider other){
-		if (other.gameObject.CompareTag ("BulletProgressionObject"))
-		count = count + 100;
-		ScoreText ();
-	}
+	public int scoreCount;
 
-	void ScoreText(){
-		countText.text = "Score: " + count.ToString ();
+	void Start () {
+		scoreCount = 0;
 	}
-
-	//GOAL: make it so that the first hit is 100 + the SUM of second and third consecutive hits. If there are no second or third consecutive hits, Score = 100;
+		
+	public void ScoreUpdate(){
+		scoreCount += 100;
+		Debug.Log ("Score increased by ." + scoreCount);
+	}
 }

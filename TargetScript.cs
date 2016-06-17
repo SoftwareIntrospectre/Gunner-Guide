@@ -1,18 +1,18 @@
-﻿using UnityEngine;
+﻿using UnityEngine; 
 using System.Collections; 
 
 public class TargetScript : MonoBehaviour {
-
+	
 	public AudioSource targetHit;
-
-	void Start(){
-		targetHit = GetComponent<AudioSource> ();
-	}
+	public int value;
 
 	void OnTriggerEnter(Collider other){
 		if (other.gameObject.CompareTag ("MagicBullet")) {
-			targetHit.Play ();
-			Destroy (gameObject);
+			GameManagerScript.instance.DestroyTarget (value, gameObject);  
+
+			AudioSource source = GetComponent<AudioSource> ();
+			source.Play ();
 		}
 	}
 }
+
