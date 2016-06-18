@@ -4,23 +4,35 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MagicBulletScript : MonoBehaviour {
+	public static MagicBulletScript instance = null;
+	public GunnerScript gunnerScript;
 
 	private int yRotation = 90;
 	private Vector3 input;  
-	private ScoreManagerScript scoreManager; 
+	private ScoreManagerScript scoreManager;  
 
 	public float magicBulletSpeed = 1;
 	public float fastSpeed;
 	public float slowSpeed;
 	public float normalSpeed;  
 	public AudioSource targetShot; 
+	public bool isFired;
+	public int scoreMultiplier;
+
+	void Awake(){
+		if (instance == null)
+			instance = this;
+		else if (instance != null)
+			Destroy (gameObject);
+	}
 
 
 	void Start() {
 
 		input = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));  
 		scoreManager = GetComponent<ScoreManagerScript> ();
-		targetShot = GetComponent<AudioSource> ();
+		gunnerScript = GetComponent<GunnerScript> ();
+		isFired = true;
 	}
 
 	void Update () {
@@ -63,13 +75,16 @@ public class MagicBulletScript : MonoBehaviour {
 	}
 		
 
-	void OnTriggerEnter (Collider other){ 
-		if (other.gameObject.CompareTag ("Obstacle")) 
-			this.gameObject.SetActive (false);
+	public void OnTriggerEnter (Collider other){ 
+		if (other.gameObject.CompareTag ("Obstacle")) {
+			Destroy (gameObject);
+			MultiplierValueReset ();
+			ConsecutiveGUIReset ();
+			isFired = false;
+			Debug.Log ("Score Multiplier is reset.");
+		}
 
 		if (other.gameObject.CompareTag ("BulletProgressionObject"))
-			//DestroyTarget ();
-			targetShot.Play ();
 			scoreManager.ScoreUpdate ();
 
 		if (other.gameObject.CompareTag ("FastGate"))
@@ -82,9 +97,13 @@ public class MagicBulletScript : MonoBehaviour {
 			magicBulletSpeed = normalSpeed;
 	}
 
-	public void DestroyTarget(int passedValue, GameObject passedObject){
-		passedObject.GetComponent<Renderer> ().enabled = false;
-		Destroy (passedObject, 1.0f);
+	public void MultiplierValueReset(){
+		GameManagerScript.instance.scoreMultiplier = 1;
+	}
+
+	void ConsecutiveGUIReset(){
+		GameManagerScript.instance.DisplayConsecutiveBonus ();
 	}
 }
+
 

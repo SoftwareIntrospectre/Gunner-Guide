@@ -3,30 +3,26 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
 
-
+[RequireComponent(typeof (AudioSource))]
 public class GunnerScript : MonoBehaviour {
-
-	//private static GunnerScript singleton;
 
 	public Transform gunnerTransform;
 	public Transform masterBulletTransform;
 	public GameObject magicBulletPrefab; 
 	public Vector3 magicBulletPosition; 
-
-	/*public Text scoreText; 
-	public int score;  */
+	public AudioSource fireBullet;
 
 	void Start () {
-		//singleton = this;
-		gunnerTransform = transform;  
-		MagicShoot ();    
-		//score = 0;
-		//UpdateScore ();
+		gunnerTransform = transform;    
+		fireBullet = GetComponent<AudioSource> ();
 	}
 
 	void Update(){
-		if (Input.GetMouseButtonDown(0)) 
+		if (Input.GetMouseButtonDown (0) || (Input.GetMouseButtonDown (1))) {
 			MagicShoot ();
+		}
+
+		PlayFireSoundOnceOnly (); 
 	} 
 			
 	public void MagicBulletPosition(){
@@ -34,31 +30,19 @@ public class GunnerScript : MonoBehaviour {
 			new Vector3 (masterBulletTransform.position.x +5, masterBulletTransform.position.y, masterBulletTransform.position.z * Time.deltaTime); 
 	}
 
-
-	void OnTriggerEnter(Collider other){ 
-		if (gameObject.CompareTag ("BulletProgressionObject")) {
-			//score = score + 10;
-			//UpdateScore();
-		}
-	}
-		
-
-	/*public static void StaticShoot() {
-		singleton.MagicShoot (); 
-	}*/
-
 	public void MagicShoot(){ 
-		
 		MagicBulletPosition (); 
 		Instantiate (magicBulletPrefab, masterBulletTransform.position, gunnerTransform.rotation * Quaternion.Euler(0,0,90));  
+		fireBullet.Play ();
 	}
 
-	/*public void AddScore(int newScoreValue){
-		score += newScoreValue;
-		UpdateScore ();
+	void PlayFireSoundOnceOnly(){ 
+		if (MagicBulletScript.instance.isFired = true) {
+			fireBullet.mute = false;
+			Debug.Log ("There's already a bullet, Jim.");
+		}
+		else 
+			fireBullet.mute = true;
+			Debug.Log ("Fire when ready, Jim.");
 	}
-
-	void UpdateScore(){
-		scoreText.text = "Score: " + score.ToString ();
-	}*/
 }

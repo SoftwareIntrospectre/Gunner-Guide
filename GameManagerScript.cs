@@ -5,10 +5,11 @@ using UnityEngine.UI;
 public class GameManagerScript : MonoBehaviour {
 	public static GameManagerScript instance = null;
 	public GameObject scoreTextObject;
-
+	public GameObject consecutiveBonusTextObject;
 
 	public int scoreValue;
 	private Text scoreText;
+	public Text consecutiveBonusText;
 	public int scoreMultiplier; 
 
 	void Awake(){
@@ -18,10 +19,8 @@ public class GameManagerScript : MonoBehaviour {
 			Destroy (gameObject);
 
 		scoreText = scoreTextObject.GetComponent<Text> ();
+		consecutiveBonusText = consecutiveBonusTextObject.GetComponent<Text> ();
 		scoreText.text = "Current Score: " + scoreValue.ToString ();
-	}
-
-	void Start(){
 		scoreMultiplier = 0;
 	}
 
@@ -34,13 +33,13 @@ public class GameManagerScript : MonoBehaviour {
 		DisplayScore ();
 	}
 
-	void DisplayScore(){
-		scoreText.text = "CurrentScore: " + scoreValue.ToString ();
+	public void DisplayScore(){
+		scoreText.text = "Score: " + scoreValue.ToString ();
+		DisplayConsecutiveBonus ();
 		Debug.Log ("You got another one, Jim!"); 
 	}
 
-	public void ResetMultiplier(){
-		scoreMultiplier = 0;
-		Debug.Log ("Score Multiplier is reset.");
+	public void DisplayConsecutiveBonus(){
+		consecutiveBonusText.text = "Hit x" + scoreMultiplier.ToString();
 	}
 }
