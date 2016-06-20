@@ -4,72 +4,63 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MagicBulletScript : MonoBehaviour {
+	public static MagicBulletScript instance = null;
+	public GunnerScript gunnerScript;
+	public MovementPathScript movementPathReference;
 
 	private int yRotation = 90;
+	private Vector3 input;  
+	private ScoreManagerScript scoreManager;  
+
+
 	public float magicBulletSpeed = 1;
 	public float fastSpeed;
 	public float slowSpeed;
-	public float normalSpeed; 
-	//private static MovementPathScript singletonMPS;  
-	private Vector3 input; 
-	//public MovementPathScript gunnerMovement; 
+	public float normalSpeed;  
+	public AudioSource targetShot; 
+	public bool isFired;
+	public int scoreMultiplier;
+	public AudioSource slowGateSFX;
+	public AudioSource fastGateSFX;
+	public AudioSource normalGateSFX;
 
-	public Text countText;
-	private int count; 
+	void Awake(){
+		if (instance == null)
+			instance = this;
+		else if (instance != null)
+			Destroy (gameObject);
+	}
 
 
 	void Start() {
-
 		input = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));  
-		//singletonMPS = GetComponent<MovementPathScript> (); 
-
-	
+		scoreManager = GetComponent<ScoreManagerScript> ();
+		gunnerScript = GetComponent<GunnerScript> ();
+		isFired = true;
+		movementPathReference = GetComponent<MovementPathScript> (); 
+		magicBulletSpeed = normalSpeed;
 	}
 
 	void Update () {
 		transform.Translate (Vector3.down * magicBulletSpeed * Time.deltaTime);   
 		MagicMovement ();
+
+		if (movementPathReference.gunnerIsHurryingToFinish = true) {
+			TurnBulletInvisible (); 
+		} 
 	}
 		
 
 	void MagicMovement(){
-	/*	int[] array = { TurnRight, TurnLeft, TurnUp, TurnDown }; 
-		switch (array [0]) {
-
-		case TurnRight:
-			input.x > 0;
-			break;
-
-		case TurnLeft:
-			input.x < 0;
-			break;
-
-		case TurnUp:
-			input.z > 0;
-			break;
-
-		case TurnDown:
-			input.z < 0;
-			break;
-
-		default:
-			input = 0;
-			break;
-		}
-	*/
-	
 		if (Input.GetKeyDown ("w")) { 
 			TurnUp ();
 		}
-
 		if (Input.GetKeyDown ("s")) {
 			TurnDown (); 
 		}
-
 		if (Input.GetKeyDown ("a")) {
 			TurnLeft (); 
 		}
-
 		if (Input.GetKeyDown ("d")) {
 			TurnRight ();  
 		}
@@ -94,27 +85,62 @@ public class MagicBulletScript : MonoBehaviour {
 	}
 		
 
-	void OnTriggerEnter (Collider other){ 
-		
-		if (other.gameObject.CompareTag ("Obstacle")) 
-			this.gameObject.SetActive (false);
+	public void OnTriggerEnter (Collider other){ 
+		if (other.gameObject.CompareTag ("Obstacle")) {
+			DestroyBulletInstance (); 
+		}
 
 		if (other.gameObject.CompareTag ("BulletProgressionObject"))
-			other.gameObject.SetActive (false);
+			scoreManager.ScoreUpdate ();
 
 		if (other.gameObject.CompareTag ("FastGate"))
-			magicBulletSpeed = magicBulletSpeed * fastSpeed;
+			FastBulletSpeedChange();
 
-		if (other.gameObject.CompareTag ("SlowGate")) 
-			magicBulletSpeed = slowSpeed; 
+		if (other.gameObject.CompareTag ("SlowGate"))
+			SlowBulletSpeedChange (); 
 
 		if (other.gameObject.CompareTag ("NormalSpeedGate"))
-			magicBulletSpeed = normalSpeed;
+			ReturnToNormalBullet ();
 	}
 
+	void DestroyBulletInstance(){ 
+		Destroy (gameObject);
+		MultiplierValueReset ();
+		ConsecutiveGUIReset ();
+		isFired = false;
+		Debug.Log ("Score Multiplier is reset.");
+	}
 
+	public void MultiplierValueReset(){
+		GameManagerScript.instance.scoreMultiplier = 1;
+	}
 
-	//add bowling score logic Function (BOWL)
+	void ConsecutiveGUIReset(){
+		GameManagerScript.instance.DisplayConsecutiveBonus ();
+	}
+
+	void SlowBulletSpeedChange(){
+		magicBulletSpeed = slowSpeed; 
+		GameManagerScript.instance.DisplaySlowText ();
+		slowGateSFX.Play (); 
+	}
+
+	void FastBulletSpeedChange(){
+		magicBulletSpeed = magicBulletSpeed * fastSpeed;
+		GameManagerScript.instance.DisplayFastText ();
+		fastGateSFX.Play ();
+	}
+
+	void ReturnToNormalBullet(){
+		magicBulletSpeed = normalSpeed;
+		GameManagerScript.instance.DisplayNormalText ();
+		normalGateSFX.Play ();
+	}
 		
+	void TurnBulletInvisible(){
+		this.gameObject.GetComponent<Renderer> ().enabled = false;
+		Debug.Log ("Ya can't see me, Jim.");
+	}
 }
+
 
