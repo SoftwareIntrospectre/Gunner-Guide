@@ -6,10 +6,12 @@ using UnityEngine.UI;
 public class MagicBulletScript : MonoBehaviour {
 	public static MagicBulletScript instance = null;
 	public GunnerScript gunnerScript;
+	public MovementPathScript movementPathReference;
 
 	private int yRotation = 90;
 	private Vector3 input;  
 	private ScoreManagerScript scoreManager;  
+
 
 	public float magicBulletSpeed = 1;
 	public float fastSpeed;
@@ -18,6 +20,9 @@ public class MagicBulletScript : MonoBehaviour {
 	public AudioSource targetShot; 
 	public bool isFired;
 	public int scoreMultiplier;
+	public AudioSource slowGateSFX;
+	public AudioSource fastGateSFX;
+	public AudioSource normalGateSFX;
 
 	void Awake(){
 		if (instance == null)
@@ -28,16 +33,21 @@ public class MagicBulletScript : MonoBehaviour {
 
 
 	void Start() {
-
 		input = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));  
 		scoreManager = GetComponent<ScoreManagerScript> ();
 		gunnerScript = GetComponent<GunnerScript> ();
 		isFired = true;
+		movementPathReference = GetComponent<MovementPathScript> (); 
+		magicBulletSpeed = normalSpeed;
 	}
 
 	void Update () {
 		transform.Translate (Vector3.down * magicBulletSpeed * Time.deltaTime);   
 		MagicMovement ();
+
+		if (movementPathReference.gunnerIsHurryingToFinish = true) {
+			TurnBulletInvisible (); 
+		} 
 	}
 		
 
@@ -77,24 +87,28 @@ public class MagicBulletScript : MonoBehaviour {
 
 	public void OnTriggerEnter (Collider other){ 
 		if (other.gameObject.CompareTag ("Obstacle")) {
-			Destroy (gameObject);
-			MultiplierValueReset ();
-			ConsecutiveGUIReset ();
-			isFired = false;
-			Debug.Log ("Score Multiplier is reset.");
+			DestroyBulletInstance (); 
 		}
 
 		if (other.gameObject.CompareTag ("BulletProgressionObject"))
 			scoreManager.ScoreUpdate ();
 
 		if (other.gameObject.CompareTag ("FastGate"))
-			magicBulletSpeed = magicBulletSpeed * fastSpeed;
+			FastBulletSpeedChange();
 
-		if (other.gameObject.CompareTag ("SlowGate")) 
-			magicBulletSpeed = slowSpeed; 
+		if (other.gameObject.CompareTag ("SlowGate"))
+			SlowBulletSpeedChange (); 
 
 		if (other.gameObject.CompareTag ("NormalSpeedGate"))
-			magicBulletSpeed = normalSpeed;
+			ReturnToNormalBullet ();
+	}
+
+	void DestroyBulletInstance(){ 
+		Destroy (gameObject);
+		MultiplierValueReset ();
+		ConsecutiveGUIReset ();
+		isFired = false;
+		Debug.Log ("Score Multiplier is reset.");
 	}
 
 	public void MultiplierValueReset(){
@@ -103,6 +117,29 @@ public class MagicBulletScript : MonoBehaviour {
 
 	void ConsecutiveGUIReset(){
 		GameManagerScript.instance.DisplayConsecutiveBonus ();
+	}
+
+	void SlowBulletSpeedChange(){
+		magicBulletSpeed = slowSpeed; 
+		GameManagerScript.instance.DisplaySlowText ();
+		slowGateSFX.Play (); 
+	}
+
+	void FastBulletSpeedChange(){
+		magicBulletSpeed = fastSpeed;
+		GameManagerScript.instance.DisplayFastText ();
+		fastGateSFX.Play ();
+	}
+
+	void ReturnToNormalBullet(){
+		magicBulletSpeed = normalSpeed;
+		GameManagerScript.instance.DisplayNormalText ();
+		normalGateSFX.Play ();
+	}
+		
+	void TurnBulletInvisible(){
+		this.gameObject.GetComponent<Renderer> ().enabled = false;
+		Debug.Log ("Ya can't see me, Jim.");
 	}
 }
 
