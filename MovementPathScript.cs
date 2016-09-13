@@ -68,15 +68,17 @@ public class MovementPathScript : MonoBehaviour {
 	}
 		
 	void OnTriggerEnter(Collider other){
-		if (other.gameObject.CompareTag ("BulletProgressionObject"))
-			SceneManager.LoadScene (restartLevel);
 
-		if (other.gameObject.CompareTag ("LaserGate") || Input.GetKey (KeyCode.Space)) {
+		if (Input.GetKey (KeyCode.Space)) {
 			SceneManager.LoadScene (restartLevel);
+			if(this.gameObject.CompareTag("MasterBulletGO")){
+				return;
+			}
 		}
 
-		if (other.gameObject.CompareTag ("NextLevel"))
-			SceneManager.LoadScene (nextLevel);
+		if(other.gameObject.CompareTag("LaserGate")){
+			CurrentWayPointID--;
+		}
 
 		if (other.gameObject.CompareTag ("MagicBullet"))
 			Debug.Log ("You shot yourself.");
@@ -124,6 +126,10 @@ public class MovementPathScript : MonoBehaviour {
 		if (gunnerIsHurryingToFinish == true) {
 			speedUp.Stop ();
 		}
+	}
+
+	void SpinGunner(){
+
 	}
 }
 

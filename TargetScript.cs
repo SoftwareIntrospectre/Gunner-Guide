@@ -18,10 +18,6 @@ public class TargetScript : MonoBehaviour {
 		targetCount = GameObject.FindGameObjectsWithTag ("BulletProgressionObject");
 		targetsRemaining = targetCount.Length;
 	}
-
-	void Update(){
-		//SpeedGunnerUpForEveryTargetDestroyed (); 
-	}
 		
 	void OnTriggerEnter(Collider other){
 		if (other.gameObject.CompareTag ("MagicBullet")) {
@@ -29,19 +25,6 @@ public class TargetScript : MonoBehaviour {
 			targetHitSFX.Play ();
 		}
 	}
-
-	/*void SpeedGunnerUpForEveryTargetDestroyed(){ 
-		foreach (GameObject target in targetCount) {
-			movementPathScript.movementSpeed -= movementPathScript.confidenceSpeed; 
-			if (targetCount[target]--){
-				movementPathScript.confidenceSpeed++;  
-
-
-				}//end of target decrease condition
-			} //end of foreach loop body
-	} // end of SpeedGunnerUpForEveryTargetDestroyed() function
-
-*/
 }
 
 
