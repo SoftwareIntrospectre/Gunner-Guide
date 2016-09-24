@@ -17,18 +17,24 @@ public class MovementPathScript : MonoBehaviour {
 	private Vector3 last_position;
 	private Vector3 current_position;
 	public static Quaternion gunnerRotation;
-	public string nextLevel;
 	public string restartLevel;
+	public string nextLevel;
 	public GameObject[] targetObjects;
 	float distance;
 	public bool gunnerIsHurryingToFinish;
 	[HideInInspector]TimerScript timerScript;
 	public AudioSource speedUp;
+	public AudioSource playSFX;
+	[HideInInspector]public SFX_Interaction_Script sfxGOReference;
+	TargetScript targetScript; 
+
 
 	void Start(){
 		gunnerIsHurryingToFinish = false;
 		timerScript = GetComponent<TimerScript> ();
 		speedUp = GetComponent<AudioSource> (); 
+		sfxGOReference = GetComponent<SFX_Interaction_Script> ();
+		targetScript = GetComponent<TargetScript> ();
 	}
 		
 	void Update () {
@@ -38,10 +44,6 @@ public class MovementPathScript : MonoBehaviour {
 
 		if (gameObject.tag != "BulletProgressionObject") {
 			PathNavigate ();
-		}
-
-		else {
-			PathRepeat ();
 		}
 			
 		if (Input.GetKeyDown ("space"))
@@ -68,20 +70,16 @@ public class MovementPathScript : MonoBehaviour {
 	}
 		
 	void OnTriggerEnter(Collider other){
-
-		if (Input.GetKey (KeyCode.Space)) {
+		
+		if (other.gameObject.CompareTag ("SFX_GO")) {
+			movementSpeed = 0;
+			sfxGOReference.enabled = false;
 			SceneManager.LoadScene (restartLevel);
-			if(this.gameObject.CompareTag("MasterBulletGO")){
-				return;
-			}
 		}
 
-		if(other.gameObject.CompareTag("LaserGate")){
-			CurrentWayPointID--;
-		}
-
-		if (other.gameObject.CompareTag ("MagicBullet"))
+		if (other.gameObject.CompareTag ("MagicBullet")) {
 			Debug.Log ("You shot yourself.");
+		}
 
 		if(other.gameObject.CompareTag("SpeedUpGO")){
 			GunnerSpeedIncrease(); 
@@ -105,18 +103,6 @@ public class MovementPathScript : MonoBehaviour {
 		}
 	}
 
-	public void PathRepeat(){
-		DistanceFunction ();
-
-		if (distance <= reachDistance) { 
-			CurrentWayPointID++;
-		}
-
-		if (CurrentWayPointID >= PathToFollow.path_objs.Count) {
-			CurrentWayPointID = 0;  
-		}
-	}
-
 	public void GunnerSpeedIncrease(){
 		movementSpeed += confidenceSpeed;
 		speedUp.Play ();
@@ -127,9 +113,4 @@ public class MovementPathScript : MonoBehaviour {
 			speedUp.Stop ();
 		}
 	}
-
-	void SpinGunner(){
-
-	}
 }
-

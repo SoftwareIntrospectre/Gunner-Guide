@@ -4,33 +4,46 @@ using UnityEngine.UI;
 
 public class PauseScript : MonoBehaviour {
 
+	public TimerScript timerScript;
+	public Text pausedText;
+	public GameObject pausedPanel;
+	public FireWhenReadyScript fireWhenReadyScript; 
 	private Toggle menuToggle;
-	public bool isPaused;
 
 	void Awake(){
 		menuToggle = GetComponent<Toggle> ();
-	}
-		
-	public void MenuIsOn(){
-		Time.timeScale = 0;
-		isPaused = true;
-		Debug.Log ("Paused");
+		timerScript = GetComponent<TimerScript> ();
+		fireWhenReadyScript = GetComponent<FireWhenReadyScript> ();
+		pausedPanel.SetActive (false);
 	}
 
-	public void MenuIsOff(){
-		Time.timeScale = 1;
-		isPaused = false;
-		Debug.Log ("Play");
+	void Update(){
+		if (Input.GetKeyDown (KeyCode.Escape)) {
+			if (Time.timeScale == 1) {
+				Paused_MenuIsOn ();
+			} else {
+				Paused_MenuIsOff ();
+			}
+		}
 	}
 
 	public void OnMenuStatusChange() {
-		if (menuToggle.isOn && !isPaused) {
-			MenuIsOn ();
+		if (menuToggle.isOn) {
+			Paused_MenuIsOn ();
 
-		} else if (!menuToggle.isOn && isPaused)
-			MenuIsOff ();
+		} /*else if (!menuToggle.isOn)
+			Paused_MenuIsOff ();*/
+	}
+		
+	public void Paused_MenuIsOn(){
+		Time.timeScale = 0;
+		pausedPanel.SetActive (true);
+		Debug.Log ("Paused");
 	}
 
-
-
+	public void Paused_MenuIsOff(){
+		Time.timeScale = 1;
+		pausedPanel.SetActive (false);
+		Debug.Log ("Play");
+	}
 }

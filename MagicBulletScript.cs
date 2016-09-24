@@ -4,70 +4,70 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MagicBulletScript : MonoBehaviour {
+	public static MagicBulletScript instance = null;
+	public GunnerScript gunnerScript;
+	public MovementPathScript movementPathReference;
 
 	private int yRotation = 90;
-	public float magicBulletSpeed = 1;
-	public float speedOffset;
-	//private static MovementPathScript singletonMPS; 
-	private Vector3 input; 
-	//public MovementPathScript gunnerMovement; 
+	private Vector3 input;  
+	private ScoreManagerScript scoreManager;  
 
-	public Text countText;
-	private int count; 
+	public float magicBulletSpeed = 1;
+	public float fastSpeed;
+	public float slowSpeed;
+	public float normalSpeed;  
+	public AudioSource targetShot; 
+	public bool isFired;
+	public int scoreMultiplier;
+
+
+	void Awake(){
+		if (instance == null) {
+			instance = this;
+		} else if (instance != null) {
+			Destroy (gameObject);
+		}
+			scoreManager = GetComponent<ScoreManagerScript> ();
+	}
 
 
 	void Start() {
-		//gunnerMovement = GetComponent<MovementPathScript> (); 
-		input = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));  
-		//singletonMPS = GetComponent<MovementPathScript> (); 
+		SetUpMagicBullet ();
+	}
 
-	
+	void SetUpMagicBullet(){
+		input = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));  
+		scoreManager = GetComponent<ScoreManagerScript> ();
+		gunnerScript = GetComponent<GunnerScript> ();
+		isFired = true;
+		movementPathReference = GetComponent<MovementPathScript> (); 
 	}
 
 	void Update () {
 		transform.Translate (Vector3.down * magicBulletSpeed * Time.deltaTime);   
 		MagicMovement ();
+
+		if (movementPathReference.gunnerIsHurryingToFinish == true) {
+			this.TurnBulletInvisible (); 
+		} 
 	}
 		
 
 	void MagicMovement(){
-	/*	int[] array = { TurnRight, TurnLeft, TurnUp, TurnDown }; 
-		switch (array [0]) {
 
-		case TurnRight:
-			input.x > 0;
-			break;
-
-		case TurnLeft:
-			input.x < 0;
-			break;
-
-		case TurnUp:
-			input.z > 0;
-			break;
-
-		case TurnDown:
-			input.z < 0;
-			break;
-
-		default:
-			input = 0;
-			break;
+		if (Time.timeScale == 0) {
+			return;
 		}
-	*/
-	
+
 		if (Input.GetKeyDown ("w")) { 
 			TurnUp ();
 		}
-
 		if (Input.GetKeyDown ("s")) {
 			TurnDown (); 
 		}
-
 		if (Input.GetKeyDown ("a")) {
 			TurnLeft (); 
 		}
-
 		if (Input.GetKeyDown ("d")) {
 			TurnRight ();  
 		}
@@ -92,18 +92,32 @@ public class MagicBulletScript : MonoBehaviour {
 	}
 		
 
-	void OnTriggerEnter (Collider other){ 
-		
-		if (other.gameObject.CompareTag ("Obstacle")) 
-			this.gameObject.SetActive (false);
+	public void OnTriggerEnter (Collider other){ 
+		if (other.gameObject.CompareTag ("Obstacle")) {
+			DestroyBulletInstance (); 
+		}
 
-		if (other.gameObject.CompareTag ("BulletProgressionObject"))
-			other.gameObject.SetActive (false);
+		if (other.gameObject.CompareTag ("BulletProgressionObject")) {
+			scoreManager.ScoreUpdate ();
+		}
 	}
 
-
-
-	//add bowling score logic Function (BOWL)
+	void DestroyBulletInstance(){ 
+		Destroy (gameObject);
+		ResetMultiplier ();
+		isFired = false;
+		Debug.Log ("Score Multiplier is reset.");
+	}
 		
+	public void ResetMultiplier(){
+		GameManagerScript.instance.scoreMultiplier = 1;
+		GameManagerScript.instance.DisplayMultiplierBonus ();
+	}
+		
+	void TurnBulletInvisible(){
+		this.gameObject.GetComponent<Renderer> ().enabled = false;
+		Debug.Log ("Ya can't see me, Jim.");
+	}
 }
+
 

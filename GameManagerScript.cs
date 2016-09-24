@@ -8,12 +8,12 @@ public class GameManagerScript : MonoBehaviour {
 	public GameObject scoreTextObject;
 	public GameObject multiplierBonusTextObject;
 	public GameObject speedUITextObject;
+	public GameObject gunnerSpeedTextObject;
 	public int scoreValue;
 	public int scoreMultiplier; 
 	private Text scoreText;
 	public Text multiplierBonusText;
 	public Text gunnerSpeedText;
-	public static bool targetDestroyed = false;
 
 	void Awake(){
 		if (instance == null)
@@ -23,12 +23,11 @@ public class GameManagerScript : MonoBehaviour {
 
 		scoreText = scoreTextObject.GetComponent<Text> ();
 		multiplierBonusText = multiplierBonusTextObject.GetComponent<Text> ();
+		movementPathScript = GetComponent<MovementPathScript> ();
+		gunnerSpeedText = gunnerSpeedTextObject.GetComponent<Text> ();
 		multiplierBonusText.text = "Multiplier x1".ToString ();
 		scoreText.text = "Score: " + scoreValue.ToString ();
-
-		movementPathScript = GetComponent<MovementPathScript> ();
-
-		gunnerSpeedText.text = "Gunner Speed: " + (int)movementPathScript.movementSpeed;
+		gunnerSpeedText.text = "Gunner Speed: " + movementPathScript.movementSpeed.ToString();
 		scoreMultiplier = 1;
 	}
 		
@@ -39,7 +38,6 @@ public class GameManagerScript : MonoBehaviour {
 		scoreValue = scoreValue + (passedValue * scoreMultiplier);
 		scoreMultiplier++;
 		DisplayScore ();
-		targetDestroyed = true;
 	}
 		
 	public void DisplayScore(){

@@ -17,7 +17,7 @@ public class SFX_Interaction_Script: MonoBehaviour {
 		}
 	}
 
-	IEnumerator PlaySFX_Function(){ 
+	public IEnumerator PlaySFX_Function(){ 
 		playSFX.Play (); 
 		yield return new WaitForSeconds (0.5f);
 		SceneManager.LoadScene (loadLevel); 

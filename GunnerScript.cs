@@ -20,11 +20,10 @@ public class GunnerScript : MonoBehaviour {
 	}
 
 	void Update(){
-		if (Input.GetMouseButtonDown (0) || Input.GetMouseButtonDown (1)) {
+		if (Input.GetMouseButtonDown (0)) {
 			MagicShoot ();
+			PlayFireSoundOnceOnly (); 
 		}
-
-		PlayFireSoundOnceOnly (); 
 	} 
 			
 	public void MagicBulletPosition(){
@@ -41,12 +40,12 @@ public class GunnerScript : MonoBehaviour {
 	}
 
 	void PlayFireSoundOnceOnly(){ 
-		if (MagicBulletScript.instance.isFired = true) {
+		if (MagicBulletScript.instance.isFired = true && Time.timeScale == 1) {
 			fireBullet.mute = false;
 			Debug.Log ("There's already a bullet, Jim.");
 		}
 		else 
-			fireBullet.mute = true;
+			fireBullet.mute = false;
 			Debug.Log ("Fire when ready, Jim.");
 	}
 }

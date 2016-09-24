@@ -4,24 +4,53 @@ using System.Collections;
 
 public class ScoreManagerScript : MonoBehaviour {
 
+	public static ScoreManagerScript scoreInstance = null;
+	[HideInInspector]public int scoreCount; 
+	[HideInInspector]public int timeBonusDifference;
+	[HideInInspector]public MovementPathScript movementPathReference;
+	[HideInInspector]public ResultsScreenManager resultsScreenReference; 
+	[HideInInspector]public TimerScript timerScript;
+	public int timeBonusValue;
+	private int timeBonusCountdown;
+	private bool timeBonusToggle;
+	public bool scoreIsUpdated = false;
+	public GameObject[] bulletProgressionObjectArray; 
 
-	public Text countText;
-	public int count; 
-
-	// Use this for initialization
-	void Start () {
-		count = 0;
+	void Start () { 
+		SetUpDefaultScore (); 
+		SetUpReferences ();
 	}
-	
-	void OnTriggerEnter (Collider other){
-		if (other.gameObject.CompareTag ("BulletProgressionObject"))
-		count = count + 100;
-		ScoreText ();
+		
+	void SetUpDefaultScore(){
+		timeBonusToggle = true; 
+		scoreCount = 0;
 	}
 
-	void ScoreText(){
-		countText.text = "Score: " + count.ToString ();
+	void SetUpReferences(){
+		movementPathReference = GetComponent<MovementPathScript> (); 
+		resultsScreenReference = GetComponent<ResultsScreenManager> (); 
 	}
 
-	//GOAL: make it so that the first hit is 100 + the SUM of second and third consecutive hits. If there are no second or third consecutive hits, Score = 100;
+	void Update(){
+		TimeBonusScore ();
+		if (movementPathReference.gunnerIsHurryingToFinish = true) {
+			Debug.Log ("Time bonus is: " + timeBonusDifference);
+		}
+	}
+
+	public void ScoreUpdate(){
+		scoreCount += 100;
+		Debug.Log ("Score increased by ." + scoreCount);
+		scoreIsUpdated = true;
+	}
+
+	public void TimeBonusScore(){
+		timeBonusDifference = (timeBonusValue - ((int)Time.timeSinceLevelLoad * 100));
+		if (timerScript.timerIsStopped = true) {
+			timeBonusDifference = timeBonusValue;
+		}
+	}
+
+
 }
+

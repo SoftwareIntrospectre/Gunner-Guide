@@ -15,8 +15,6 @@ public class TargetScript : MonoBehaviour {
 		targetHitSFX = GetComponent<AudioSource> ();
 		TimerScript = GetComponent<TimerScript> ();
 		movementPathScript = GetComponent<MovementPathScript> ();  
-		targetCount = GameObject.FindGameObjectsWithTag ("BulletProgressionObject");
-		targetsRemaining = targetCount.Length;
 	}
 		
 	void OnTriggerEnter(Collider other){
