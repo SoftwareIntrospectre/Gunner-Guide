@@ -19,9 +19,9 @@ public class TargetScript : MonoBehaviour {
 		
 	void OnTriggerEnter(Collider other){
 		if (other.gameObject.CompareTag ("MagicBullet")) {
-			GameManagerScript.instance.DestroyTarget (100, gameObject);  
-			targetHitSFX.Play ();
-		}
+				GameManagerScript.instance.DestroyTarget (100, gameObject);  
+				targetHitSFX.Play ();
+		} 
 	}
 }
 

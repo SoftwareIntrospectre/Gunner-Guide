@@ -19,15 +19,20 @@ public class MagicBulletScript : MonoBehaviour {
 	public AudioSource targetShot; 
 	public bool isFired;
 	public int scoreMultiplier;
+	public AudioSource bulletFiredSFX;
+	public AudioSource gunnerDeathSFX;
 
 
 	void Awake(){
 		if (instance == null) {
 			instance = this;
+
 		} else if (instance != null) {
 			Destroy (gameObject);
 		}
 			scoreManager = GetComponent<ScoreManagerScript> ();
+			bulletFiredSFX = GetComponent<AudioSource> ();
+			gunnerDeathSFX = GetComponent<AudioSource> ();
 	}
 
 
@@ -41,6 +46,7 @@ public class MagicBulletScript : MonoBehaviour {
 		gunnerScript = GetComponent<GunnerScript> ();
 		isFired = true;
 		movementPathReference = GetComponent<MovementPathScript> (); 
+		bulletFiredSFX.Play ();
 	}
 
 	void Update () {
@@ -48,7 +54,7 @@ public class MagicBulletScript : MonoBehaviour {
 		MagicMovement ();
 
 		if (movementPathReference.gunnerIsHurryingToFinish == true) {
-			this.TurnBulletInvisible (); 
+			this.BulletVanishes(); 
 		} 
 	}
 		
@@ -100,6 +106,11 @@ public class MagicBulletScript : MonoBehaviour {
 		if (other.gameObject.CompareTag ("BulletProgressionObject")) {
 			scoreManager.ScoreUpdate ();
 		}
+
+		if(other.gameObject.CompareTag("Gunner")){
+			gunnerDeathSFX.Play ();
+			BulletVanishes();  
+		}
 	}
 
 	void DestroyBulletInstance(){ 
@@ -114,8 +125,10 @@ public class MagicBulletScript : MonoBehaviour {
 		GameManagerScript.instance.DisplayMultiplierBonus ();
 	}
 		
-	void TurnBulletInvisible(){
+	void BulletVanishes(){
 		this.gameObject.GetComponent<Renderer> ().enabled = false;
+		this.gameObject.GetComponentInChildren<Renderer>().enabled = false; 
+		this.gameObject.GetComponent<Collider> ().enabled = false;
 		Debug.Log ("Ya can't see me, Jim.");
 	}
 }

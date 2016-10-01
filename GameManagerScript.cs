@@ -14,21 +14,30 @@ public class GameManagerScript : MonoBehaviour {
 	private Text scoreText;
 	public Text multiplierBonusText;
 	public Text gunnerSpeedText;
+	public AudioSource reloadSFX;
 
 	void Awake(){
 		if (instance == null)
 			instance = this;
 		else if (instance != null)
 			Destroy (gameObject);
-
+		
 		scoreText = scoreTextObject.GetComponent<Text> ();
 		multiplierBonusText = multiplierBonusTextObject.GetComponent<Text> ();
 		movementPathScript = GetComponent<MovementPathScript> ();
 		gunnerSpeedText = gunnerSpeedTextObject.GetComponent<Text> ();
+		reloadSFX = GetComponent<AudioSource> ();
+
 		multiplierBonusText.text = "Multiplier x1".ToString ();
 		scoreText.text = "Score: " + scoreValue.ToString ();
 		gunnerSpeedText.text = "Gunner Speed: " + movementPathScript.movementSpeed.ToString();
 		scoreMultiplier = 1;
+	}
+
+	void Update(){
+		if (MagicBulletScript.instance == null) {
+			reloadSFX.Play ();
+		}
 	}
 		
 	public void DestroyTarget(int passedValue, GameObject passedObject){

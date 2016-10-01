@@ -24,8 +24,8 @@ public class MovementPathScript : MonoBehaviour {
 	public bool gunnerIsHurryingToFinish;
 	[HideInInspector]TimerScript timerScript;
 	public AudioSource speedUp;
-	public AudioSource playSFX;
 	[HideInInspector]public SFX_Interaction_Script sfxGOReference;
+	public AudioSource gunnerDeathSFX;  
 	TargetScript targetScript; 
 
 
@@ -35,6 +35,7 @@ public class MovementPathScript : MonoBehaviour {
 		speedUp = GetComponent<AudioSource> (); 
 		sfxGOReference = GetComponent<SFX_Interaction_Script> ();
 		targetScript = GetComponent<TargetScript> ();
+		gunnerDeathSFX = GetComponent<AudioSource> ();
 	}
 		
 	void Update () {
@@ -79,6 +80,7 @@ public class MovementPathScript : MonoBehaviour {
 
 		if (other.gameObject.CompareTag ("MagicBullet")) {
 			Debug.Log ("You shot yourself.");
+			StartCoroutine (GunnerDeath ());
 		}
 
 		if(other.gameObject.CompareTag("SpeedUpGO")){
@@ -112,5 +114,12 @@ public class MovementPathScript : MonoBehaviour {
 		if (gunnerIsHurryingToFinish == true) {
 			speedUp.Stop ();
 		}
+	}
+
+	public IEnumerator GunnerDeath(){
+		movementSpeed = 0;
+		gunnerDeathSFX.Play ();
+		yield return new WaitForSeconds (1);
+		SceneManager.LoadScene (restartLevel);
 	}
 }
