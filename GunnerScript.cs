@@ -1,37 +1,47 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using System.Collections;
 
+[RequireComponent(typeof (AudioSource))]
 public class GunnerScript : MonoBehaviour {
 
-	private static GunnerScript singleton;
-
 	public Transform gunnerTransform;
-	public GameObject masterBullet; 
-	public GameObject magicBullet; 
+	public Transform masterBulletTransform;
+	public GameObject magicBulletPrefab; 
 	public Vector3 magicBulletPosition; 
-	bool isFired;
+	private bool hasPlayed = false;
+	public MovementPathScript movementPathReference;
+	public AudioSource emptyGunSFX;
 
 	void Start () {
-		singleton = this;
-		gunnerTransform = transform;
-		MagicShoot ();  
-
+		movementPathReference = GetComponent<MovementPathScript> ();
+		gunnerTransform = transform;    
+		emptyGunSFX = GetComponent<AudioSource> (); 
 	}
+
+	void Update(){
+		if (Input.GetMouseButtonDown (0)) {
+			StartCoroutine(MagicShoot());
+			if (movementPathReference.gunnerIsHurryingToFinish = true) {
+				return;
+			} 
+		}
+	} 
 			
 	public void MagicBulletPosition(){
+		hasPlayed = true;
 		magicBulletPosition = 
-			new Vector3 (gunnerTransform.position.x + 5, gunnerTransform.position.y, gunnerTransform.position.z + 1 * Time.deltaTime); 
-	}
-		
-
-	public static void StaticShoot() {
-		singleton.MagicShoot (); 
+			new Vector3 (masterBulletTransform.position.x +5, masterBulletTransform.position.y, masterBulletTransform.position.z * Time.deltaTime); 
 	}
 
-	public void MagicShoot(){ 
-		
-		MagicBulletPosition (); 
-		Instantiate (magicBullet, masterBullet.transform.position, gunnerTransform.rotation * Quaternion.Euler(90,0,90));  
-	}
+	public IEnumerator MagicShoot(){ 
+		if (MagicBulletScript.instance != null) {
+			emptyGunSFX.Play ();
+			yield return null;
+		} 
+			MagicBulletPosition (); 
+			Instantiate (magicBulletPrefab, masterBulletTransform.position, gunnerTransform.rotation * Quaternion.Euler (0, 0, 90));  
+		}
 }
+
