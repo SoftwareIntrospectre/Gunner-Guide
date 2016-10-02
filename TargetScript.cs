@@ -21,6 +21,9 @@ public class TargetScript : MonoBehaviour {
 			GameManagerScript.instance.DestroyTarget (100, gameObject);  
 			targetHitSFX.Play ();
 		}
+		if (movementPathScript.isDead = true) {
+			return;
+		} 
 	}
 }
 

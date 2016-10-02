@@ -22,6 +22,7 @@ public class MovementPathScript : MonoBehaviour {
 	public GameObject[] targetObjects;
 	float distance;
 	public bool gunnerIsHurryingToFinish;
+	public bool isDead;
 	[HideInInspector]TimerScript timerScript;
 	[HideInInspector]public SFX_Interaction_Script sfxGOReference;
 	public AudioSource[] gunnerSounds;
@@ -31,6 +32,7 @@ public class MovementPathScript : MonoBehaviour {
 
 	void Start(){
 		gunnerIsHurryingToFinish = false;
+		isDead = !true;
 		timerScript = GetComponent<TimerScript> ();
 		sfxGOReference = GetComponent<SFX_Interaction_Script> ();
 		targetScript = GetComponent<TargetScript> ();
@@ -72,6 +74,7 @@ public class MovementPathScript : MonoBehaviour {
 	void OnTriggerEnter(Collider other){
 		
 		if (other.gameObject.CompareTag ("SFX_GO")) {
+				isDead = true;
 				StartCoroutine (GunnerDeath ());
 			} 
 
@@ -121,6 +124,7 @@ public class MovementPathScript : MonoBehaviour {
 
 	public IEnumerator GunnerDeath(){
 		movementSpeed = 0;
+		MagicBulletScript.instance.DestroyBulletInstance ();
 		foreach (Renderer gunnerRenderer in GetComponentsInChildren<Renderer>()) {
 			gunnerRenderer.enabled = false;
 		}

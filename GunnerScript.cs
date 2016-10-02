@@ -10,42 +10,38 @@ public class GunnerScript : MonoBehaviour {
 	public Transform masterBulletTransform;
 	public GameObject magicBulletPrefab; 
 	public Vector3 magicBulletPosition; 
-	public AudioSource fireBullet;
-
-	[HideInInspector] public bool gunnerIsShootable = false;
+	private bool hasPlayed = false;
+	public MovementPathScript movementPathReference;
+	public AudioSource emptyGunSFX;
 
 	void Start () {
+		movementPathReference = GetComponent<MovementPathScript> ();
 		gunnerTransform = transform;    
-		fireBullet = GetComponent<AudioSource> ();
+		emptyGunSFX = GetComponent<AudioSource> (); 
 	}
 
 	void Update(){
 		if (Input.GetMouseButtonDown (0)) {
-			MagicShoot ();
-			PlayFireSoundOnceOnly (); 
+			StartCoroutine(MagicShoot());
+			if (movementPathReference.gunnerIsHurryingToFinish = true) {
+				return;
+			} 
 		}
 	} 
 			
 	public void MagicBulletPosition(){
+		hasPlayed = true;
 		magicBulletPosition = 
 			new Vector3 (masterBulletTransform.position.x +5, masterBulletTransform.position.y, masterBulletTransform.position.z * Time.deltaTime); 
 	}
 
-	public void MagicShoot(){ 
-		MagicBulletPosition (); 
-		Instantiate (magicBulletPrefab, masterBulletTransform.position, gunnerTransform.rotation * Quaternion.Euler(0,0,90));  
-		gunnerIsShootable = true;
-		Debug.Log ("Jim is now vincible.");
-		fireBullet.Play ();
-	}
-
-	void PlayFireSoundOnceOnly(){ 
-		if (MagicBulletScript.instance.isFired = true && Time.timeScale == 1) {
-			fireBullet.mute = false;
-			Debug.Log ("There's already a bullet, Jim.");
+	public IEnumerator MagicShoot(){ 
+		if (MagicBulletScript.instance != null) {
+			emptyGunSFX.Play ();
+			yield return null;
+		} 
+			MagicBulletPosition (); 
+			Instantiate (magicBulletPrefab, masterBulletTransform.position, gunnerTransform.rotation * Quaternion.Euler (0, 0, 90));  
 		}
-		else 
-			fireBullet.mute = false;
-			Debug.Log ("Fire when ready, Jim.");
-	}
 }
+
