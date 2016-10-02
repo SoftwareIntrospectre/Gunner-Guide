@@ -19,9 +19,7 @@ public class MagicBulletScript : MonoBehaviour {
 	public AudioSource targetShot; 
 	public bool isFired;
 	public int scoreMultiplier;
-	public AudioSource bulletFiredSFX;
-	public AudioSource gunnerDeathSFX;
-
+	public AudioSource [] bulletSounds;
 
 	void Awake(){
 		if (instance == null) {
@@ -31,8 +29,6 @@ public class MagicBulletScript : MonoBehaviour {
 			Destroy (gameObject);
 		}
 			scoreManager = GetComponent<ScoreManagerScript> ();
-			bulletFiredSFX = GetComponent<AudioSource> ();
-			gunnerDeathSFX = GetComponent<AudioSource> ();
 	}
 
 
@@ -46,7 +42,7 @@ public class MagicBulletScript : MonoBehaviour {
 		gunnerScript = GetComponent<GunnerScript> ();
 		isFired = true;
 		movementPathReference = GetComponent<MovementPathScript> (); 
-		bulletFiredSFX.Play ();
+		bulletSounds[0].Play (); 
 	}
 
 	void Update () {
@@ -54,7 +50,7 @@ public class MagicBulletScript : MonoBehaviour {
 		MagicMovement ();
 
 		if (movementPathReference.gunnerIsHurryingToFinish == true) {
-			this.BulletVanishes(); 
+			Destroy (this.gameObject);
 		} 
 	}
 		
@@ -100,20 +96,24 @@ public class MagicBulletScript : MonoBehaviour {
 
 	public void OnTriggerEnter (Collider other){ 
 		if (other.gameObject.CompareTag ("Obstacle")) {
-			DestroyBulletInstance (); 
+			StartCoroutine(DestroyBulletInstance ()); 
 		}
 
 		if (other.gameObject.CompareTag ("BulletProgressionObject")) {
 			scoreManager.ScoreUpdate ();
 		}
-
-		if(other.gameObject.CompareTag("Gunner")){
-			gunnerDeathSFX.Play ();
-			BulletVanishes();  
-		}
 	}
 
-	void DestroyBulletInstance(){ 
+	public IEnumerator DestroyBulletInstance(){ 
+		bulletSounds [1].Play ();
+		foreach (Renderer bulletRenderer in GetComponentsInChildren<Renderer>()) {
+			bulletRenderer.enabled = false;
+		}
+
+		foreach (Collider bulletCollider in GetComponentsInChildren<Collider>()) {
+			bulletCollider.enabled = false;
+		}
+		yield return new WaitForSeconds (0.55f);
 		Destroy (gameObject);
 		ResetMultiplier ();
 		isFired = false;
@@ -123,13 +123,6 @@ public class MagicBulletScript : MonoBehaviour {
 	public void ResetMultiplier(){
 		GameManagerScript.instance.scoreMultiplier = 1;
 		GameManagerScript.instance.DisplayMultiplierBonus ();
-	}
-		
-	void BulletVanishes(){
-		this.gameObject.GetComponent<Renderer> ().enabled = false;
-		this.gameObject.GetComponentInChildren<Renderer>().enabled = false; 
-		this.gameObject.GetComponent<Collider> ().enabled = false;
-		Debug.Log ("Ya can't see me, Jim.");
 	}
 }
 

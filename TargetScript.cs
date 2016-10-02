@@ -8,7 +8,6 @@ public class TargetScript : MonoBehaviour {
 	[HideInInspector]public MovementPathScript movementPathScript;  
 	private int targetsRemaining;
 	public AudioSource targetHitSFX;
-	public GameObject[] targetCount; 
 
 
 	void Start(){
@@ -19,9 +18,9 @@ public class TargetScript : MonoBehaviour {
 		
 	void OnTriggerEnter(Collider other){
 		if (other.gameObject.CompareTag ("MagicBullet")) {
-				GameManagerScript.instance.DestroyTarget (100, gameObject);  
-				targetHitSFX.Play ();
-		} 
+			GameManagerScript.instance.DestroyTarget (100, gameObject);  
+			targetHitSFX.Play ();
+		}
 	}
 }
 

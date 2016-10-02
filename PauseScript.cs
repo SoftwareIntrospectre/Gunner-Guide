@@ -9,11 +9,13 @@ public class PauseScript : MonoBehaviour {
 	public GameObject pausedPanel;
 	public FireWhenReadyScript fireWhenReadyScript; 
 	private Toggle menuToggle;
+	[HideInInspector] GunnerScript gunnerScript;
 
 	void Awake(){
 		menuToggle = GetComponent<Toggle> ();
 		timerScript = GetComponent<TimerScript> ();
 		fireWhenReadyScript = GetComponent<FireWhenReadyScript> ();
+		gunnerScript = GetComponent<GunnerScript> (); 
 		pausedPanel.SetActive (false);
 	}
 
@@ -21,8 +23,8 @@ public class PauseScript : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			if (Time.timeScale == 1) {
 				Paused_MenuIsOn ();
-			} else {
-				Paused_MenuIsOff ();
+			} else { 
+				Paused_MenuIsOff (); 
 			}
 		}
 	}
@@ -37,12 +39,14 @@ public class PauseScript : MonoBehaviour {
 		
 	public void Paused_MenuIsOn(){
 		Time.timeScale = 0;
+		AudioListener.volume = 0;
 		pausedPanel.SetActive (true);
 		Debug.Log ("Paused");
 	}
 
 	public void Paused_MenuIsOff(){
 		Time.timeScale = 1;
+		AudioListener.volume = 1;
 		pausedPanel.SetActive (false);
 		Debug.Log ("Play");
 	}

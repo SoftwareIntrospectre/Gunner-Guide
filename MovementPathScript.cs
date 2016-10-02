@@ -23,19 +23,18 @@ public class MovementPathScript : MonoBehaviour {
 	float distance;
 	public bool gunnerIsHurryingToFinish;
 	[HideInInspector]TimerScript timerScript;
-	public AudioSource speedUp;
 	[HideInInspector]public SFX_Interaction_Script sfxGOReference;
-	public AudioSource gunnerDeathSFX;  
-	TargetScript targetScript; 
+	public AudioSource[] gunnerSounds;
+	private TargetScript targetScript; 
+	public GunnerScript gunnerScript; 
 
 
 	void Start(){
 		gunnerIsHurryingToFinish = false;
 		timerScript = GetComponent<TimerScript> ();
-		speedUp = GetComponent<AudioSource> (); 
 		sfxGOReference = GetComponent<SFX_Interaction_Script> ();
 		targetScript = GetComponent<TargetScript> ();
-		gunnerDeathSFX = GetComponent<AudioSource> ();
+		gunnerScript = GetComponent<GunnerScript> ();
 	}
 		
 	void Update () {
@@ -73,14 +72,18 @@ public class MovementPathScript : MonoBehaviour {
 	void OnTriggerEnter(Collider other){
 		
 		if (other.gameObject.CompareTag ("SFX_GO")) {
-			movementSpeed = 0;
-			sfxGOReference.enabled = false;
-			SceneManager.LoadScene (restartLevel);
+				StartCoroutine (GunnerDeath ());
+			} 
+
+		if (other.gameObject.CompareTag ("Goal")) {
+			StartCoroutine (GoalReached ());
 		}
+
 
 		if (other.gameObject.CompareTag ("MagicBullet")) {
 			Debug.Log ("You shot yourself.");
 			StartCoroutine (GunnerDeath ());
+			MagicBulletScript.instance.bulletSounds [1].mute = true;
 		}
 
 		if(other.gameObject.CompareTag("SpeedUpGO")){
@@ -107,19 +110,29 @@ public class MovementPathScript : MonoBehaviour {
 
 	public void GunnerSpeedIncrease(){
 		movementSpeed += confidenceSpeed;
-		speedUp.Play ();
+		gunnerSounds[0].Play ();
 		if (confidenceSpeed >= movementSpeed) {
 			confidenceSpeed = movementSpeed;
 		}
 		if (gunnerIsHurryingToFinish == true) {
-			speedUp.Stop ();
+			gunnerSounds [0].mute = true;
 		}
 	}
 
 	public IEnumerator GunnerDeath(){
 		movementSpeed = 0;
-		gunnerDeathSFX.Play ();
+		foreach (Renderer gunnerRenderer in GetComponentsInChildren<Renderer>()) {
+			gunnerRenderer.enabled = false;
+		}
+		gunnerSounds[1].Play (); 
 		yield return new WaitForSeconds (1);
 		SceneManager.LoadScene (restartLevel);
+	}
+
+	public IEnumerator GoalReached(){
+		movementSpeed = 0;
+		gunnerSounds [2].Play ();
+		yield return new WaitForSeconds (1.2f);
+		SceneManager.LoadScene (nextLevel);
 	}
 }
